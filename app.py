@@ -1,5 +1,5 @@
 import streamlit as st
-import matplotlib.pyplot as plt
+import plotly.graph_objects as go
 from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
 from transformers import pipeline
 import re
@@ -99,31 +99,20 @@ def count_highlighted_words_in_summary(summary, top_words_count, top_words_tfidf
     return count_top_words, tfidf_top_words
 
 # Visualization function
-def plot_word_ranking(sorted_count, sorted_tfidf):
-    top_words_count = [word for word, _ in sorted_count]
-    top_counts = [freq for _, freq in sorted_count]
-    top_words_tfidf = [word for word, _ in sorted_tfidf]
-    top_tfidf = [score for _, score in sorted_tfidf]
-    plt.style.use('ggplot')
-    fig, axes = plt.subplots(1, 2, figsize=(14, 6))
-    bars1 = axes[0].barh(top_words_count, top_counts, color='dodgerblue', edgecolor='black')
-    axes[0].set_title('Top 10 Words by CountVectorizer', fontsize=14, fontweight='bold')
-    axes[0].invert_yaxis()
-    axes[0].set_xlabel('Word Count', fontsize=12)
-    axes[0].grid(True, linestyle='--', alpha=0.6)
-    for bar in bars1:
-        width = bar.get_width()
-        axes[0].text(width + 0.1, bar.get_y() + bar.get_height() / 2, f'{width:.0f}', va='center', fontsize=10, color='black')
-    bars2 = axes[1].barh(top_words_tfidf, top_tfidf, color='mediumseagreen', edgecolor='black')
-    axes[1].set_title('Top 10 Words by TfidfVectorizer', fontsize=14, fontweight='bold')
-    axes[1].invert_yaxis()
-    axes[1].set_xlabel('TF-IDF Score', fontsize=12)
-    axes[1].grid(True, linestyle='--', alpha=0.6)
-    for bar in bars2:
-        width = bar.get_width()
-        axes[1].text(width + 0.005, bar.get_y() + bar.get_height() / 2, f'{width:.2f}', va='center', fontsize=10, color='black')
-    plt.tight_layout()
-    st.pyplot(fig)
+# Plot graphs using Plotly
+def plot_graphs(sorted_count, sorted_tfidf):
+    count_words, count_values = zip(*sorted_count)
+    tfidf_words, tfidf_values = zip(*sorted_tfidf)
+
+    # CountVectorizer plot
+    fig1 = go.Figure([go.Bar(x=count_values, y=count_words, orientation='h', marker=dict(color='dodgerblue'))])
+    fig1.update_layout(title="Top 10 Words by CountVectorizer", xaxis_title='Word Count', yaxis_title='Words')
+    st.plotly_chart(fig1, use_container_width=True)
+
+    # TF-IDF plot
+    fig2 = go.Figure([go.Bar(x=tfidf_values, y=tfidf_words, orientation='h', marker=dict(color='mediumseagreen'))])
+    fig2.update_layout(title="Top 10 Words by TfidfVectorizer", xaxis_title='TF-IDF Score', yaxis_title='Words')
+    st.plotly_chart(fig2, use_container_width=True)
 
 if st.button("Analyze Text and Generate Summaries") and user_text.strip():
     # Perform analysis and generate summaries
@@ -173,5 +162,5 @@ if st.button("Analyze Text and Generate Summaries") and user_text.strip():
     # Section: Word Analysis and Plot
     st.markdown('<div class="analysis-section"><h3>Vectorization-Based Word Analysis</h3>', unsafe_allow_html=True)
     st.write("")
-    plot_word_ranking(sorted_count, sorted_tfidf)
+    plot_graphs(sorted_count, sorted_tfidf)
     st.markdown('</div>', unsafe_allow_html=True)
