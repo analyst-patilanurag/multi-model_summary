@@ -1,7 +1,3 @@
-Here’s a **README.md** file for your Streamlit application.
-
----
-
 # **Multi-Model Text Summarization with Vectorization Insights**
 
 This Streamlit app allows users to generate and compare summaries using multiple NLP models and visualize word vectorization insights. It integrates **T5**, **Pegasus**, and **DistilBART** models for summarization and provides detailed text analysis through **CountVectorizer** and **TfidfVectorizer**.
