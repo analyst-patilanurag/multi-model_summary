@@ -1,7 +1,7 @@
 import streamlit as st
 import plotly.graph_objects as go
 from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
-from transformers import pipeline
+from transformers.pipelines import pipeline
 import re
 
 # Streamlit app layout with custom CSS styles
@@ -16,7 +16,6 @@ st.markdown(
         align-items: center;
     }
     h3 {
-        
         margin-top: 0;
         color: darkblue;  /* Set font color to black */
     }
@@ -27,7 +26,7 @@ st.markdown(
 
 # Streamlit app title and input
 st.title("Multi-Model Text Summarization with Vectorization Insights")
-st.text("This app shows comparison of summaries using different models wrt. vectorization.")
+st.write("This app shows how vectorization helps in getting the context of the text and comparison of summaries using T5 and distilBart models. To understand compare words from the graphs at the bottom and highlighted words in the summary.")
 
 # Input box for user text with larger box for copy-paste functionality
 user_text = st.text_area("Paste your text here:", height=200)
@@ -66,12 +65,10 @@ def highlight_summary(summary, top_words_count, top_words_tfidf):
 # Function to generate summaries
 def generate_summaries(input_text):
     t5_summarizer = pipeline("summarization", model="t5-small")
-    pegasus_summarizer = pipeline("summarization", model="google/pegasus-xsum")
     distilbart_summarizer = pipeline("summarization", model="sshleifer/distilbart-cnn-12-6")
     t5_summary = t5_summarizer(input_text, max_length=130, min_length=30, do_sample=False)[0]['summary_text']
-    pegasus_summary = pegasus_summarizer(input_text, max_length=130, min_length=30, do_sample=False)[0]['summary_text']
     distilbart_summary = distilbart_summarizer(input_text, max_length=130, min_length=30, do_sample=False)[0]['summary_text']
-    return t5_summary, pegasus_summary, distilbart_summary
+    return t5_summary, distilbart_summary
 
 # Vectorization and analysis
 def analyze_text(input_text):
@@ -117,15 +114,11 @@ def plot_graphs(sorted_count, sorted_tfidf):
 if st.button("Analyze Text and Generate Summaries") and user_text.strip():
     # Perform analysis and generate summaries
     top_words_count, top_words_tfidf, sorted_count, sorted_tfidf, count_vocab = analyze_text(user_text)
-    t5_summary, pegasus_summary, distilbart_summary = generate_summaries(user_text)
+    t5_summary, distilbart_summary = generate_summaries(user_text)
 
     # Section: Display highlighted summaries
     st.markdown('<div class="summary-section"><h3>T5 Summary</h3>', unsafe_allow_html=True)
     st.markdown(highlight_summary(t5_summary, top_words_count, top_words_tfidf), unsafe_allow_html=True)
-    st.markdown('</div>', unsafe_allow_html=True)
-
-    st.markdown('<div class="summary-section"><h3>Pegasus Summary</h3>', unsafe_allow_html=True)
-    st.markdown(highlight_summary(pegasus_summary, top_words_count, top_words_tfidf), unsafe_allow_html=True)
     st.markdown('</div>', unsafe_allow_html=True)
 
     st.markdown('<div class="summary-section"><h3>DistilBART Summary</h3>', unsafe_allow_html=True)
@@ -134,8 +127,8 @@ if st.button("Analyze Text and Generate Summaries") and user_text.strip():
 
     # Section: Detailed Text Analysis
     st.markdown('<div class="analysis-section"><h3>Detailed Text Analysis</h3>', unsafe_allow_html=True)
-    for summary_text, model_name in zip([t5_summary, pegasus_summary, distilbart_summary], 
-                                        ["T5", "Pegasus", "DistilBART"]):
+    for summary_text, model_name in zip([t5_summary, distilbart_summary], 
+                                        ["T5", "DistilBART"]):
         st.markdown(f"#### {model_name} Summary Analysis")
         col1, col2 = st.columns(2)
         with col1:
@@ -153,8 +146,8 @@ if st.button("Analyze Text and Generate Summaries") and user_text.strip():
     # Section: Comparison of Highlighted Words
     st.markdown('<div class="comparison-section"><h3>Comparison of Highlighted Words in Summaries</h3>', unsafe_allow_html=True)
     st.write("")
-    for summary, name in zip([t5_summary, pegasus_summary, distilbart_summary], 
-                             ["T5", "Pegasus", "DistilBART"]):
+    for summary, name in zip([t5_summary, distilbart_summary], 
+                             ["T5", "DistilBART"]):
         count_top, tfidf_top = count_highlighted_words_in_summary(summary, top_words_count, top_words_tfidf)
         st.write(f"**{name} Summary:** {count_top}/10 Top words from Vectorization")
     st.markdown('</div>', unsafe_allow_html=True)
