@@ -1,12 +1,12 @@
 # **Multi-Model Text Summarization with Vectorization Insights**
 
-This Streamlit app allows users to generate and compare summaries using multiple NLP models and visualize word vectorization insights. It integrates **T5**, **Pegasus**, and **DistilBART** models for summarization and provides detailed text analysis through **CountVectorizer** and **TfidfVectorizer**.
+This Streamlit app allows users to generate and compare summaries using NLP models and visualize word vectorization insights. It integrates **T5** and **DistilBART** models for summarization and provides detailed text analysis through **CountVectorizer** and **TfidfVectorizer**.
 
 ---
 
 ## **Features**
 1. **Multi-Model Summarization:**
-   - Generate summaries using **T5**, **Pegasus**, and **DistilBART**.
+   - Generate summaries using **T5** and **DistilBART**.
    - Compare summaries across models.
 
 2. **Vectorization-Based Word Analysis:**
@@ -27,9 +27,9 @@ This Streamlit app allows users to generate and compare summaries using multiple
 
 ## **Technologies Used**
 - **Streamlit:** Web framework for the interactive user interface.
-- **Transformers Library:** Summarization models including **T5**, **Pegasus**, and **DistilBART**.
+- **Transformers Library:** Summarization models including **T5** and **DistilBART**.
 - **scikit-learn:** Vectorization tools (**CountVectorizer**, **TfidfVectorizer**).
-- **Matplotlib:** Visualization of word rankings.
+- **Plotly:** Visualization of word rankings.
 
 ---
 
@@ -62,7 +62,7 @@ streamlit run app.py
 
 2. **Summarization Models:**  
    - Generate summaries by clicking the **Analyze Text and Generate Summaries** button.
-   - The summaries from **T5**, **Pegasus**, and **DistilBART** will be displayed with highlighted key words.
+   - The summaries from **T5** and **DistilBART** will be displayed with highlighted key words.
 
 3. **Detailed Text Analysis:**  
    - See the total words, words in the summary, stop words removed, and unique words after stop word removal.
